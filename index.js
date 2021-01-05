@@ -30,6 +30,34 @@ app.post("/payment", async (req, res) => {
   }
 });
 
+// creating checkout session
+
+app.post("/create-checkout-session", async (req, res) => {
+  console.log("inside checkout session", req.body);
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price_data: {
+          currency: "inr",
+          product_data: {
+            name: "TROUSER",
+          },
+          unit_amount: 1000,
+        },
+        quantity: 5,
+      },
+    ],
+    mode: "payment",
+    success_url: "https://www.google.com/",
+    cancel_url: "https://localhost:3000/",
+  });
+
+  console.log("response of session", session.id);
+
+  res.json({ id: session.id });
+});
+
 var server = app.listen(8080, () => {
   var host = server.address().address;
   var port = server.address().port;
